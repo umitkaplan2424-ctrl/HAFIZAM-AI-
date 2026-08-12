@@ -1,10 +1,6 @@
 name: Build Android Debug APK
 
 on:
-  push:
-    branches:
-      - main
-      - master
   workflow_dispatch:
 
 jobs:
@@ -15,33 +11,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: zulu
-          java-version: '17'
-
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: npm
 
       - name: Install dependencies
         run: npm install
 
-      - name: Build web app
+      - name: Build web
         run: npm run build
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
 
       - name: Sync Capacitor
         run: npx cap sync android
 
-      - name: Make Gradle executable
-        run: chmod +x android/gradlew
-
       - name: Build APK
-        working-directory: android
-        run: ./gradlew assembleDebug
+        run: |
+          chmod +x android/gradlew
+          cd android
+          ./gradlew assembleDebug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
