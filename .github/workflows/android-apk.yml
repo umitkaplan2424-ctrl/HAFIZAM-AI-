@@ -1,3 +1,4 @@
+
 name: Build Android Debug APK
 
 on:
@@ -10,15 +11,61 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Extract source project from ZIP
+        shell: bash
+        run: |
+          set -e
+
+          echo "ZIP dosyaları:"
+          find . -maxdepth 2 -type f -name "*.zip" -print
+
+          ZIP_FILE="$(find . -maxdepth 2 -type f -iname "*.zip" | head -n 1)"
+
+          if [ -z "$ZIP_FILE" ]; then
+            echo "HATA: ZIP dosyası bulunamadı."
+            exit 1
+          fi
+
+          echo "Kullanılan ZIP: $ZIP_FILE"
+
+          rm -rf .source
+          mkdir -p .source
+
+          unzip -q "$ZIP_FILE" -d .source
+
+          echo "ZIP açıldı."
+
+          SOURCE_DIR="$(find .source -type f -name package.json -not -path '*/node_modules/*' -print -quit | xargs -r dirname)"
+
+          if [ -z "$SOURCE_DIR" ]; then
+            echo "HATA: ZIP içerisinde package.json bulunamadı."
+            exit 1
+          fi
+
+          echo "Kaynak proje: $SOURCE_DIR"
+
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.github/' \
+            --exclude='node_modules/' \
+            "$SOURCE_DIR"/ ./
+
+          echo "Kaynak proje köke aktarıldı."
+
+          echo "Proje yapısı:"
+          ls -la
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          
 
       - name: Install dependencies
         run: npm install
