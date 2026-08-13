@@ -1,0 +1,10 @@
+{
+  "name": "HAFIZAM AI",
+  "description": "Sen çağır, ben hatırlayayım. Sesli, yazılı ve görsel kişisel yapay zekâ asistanı.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,16 @@
+import type { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.hafizam.ai',
+  appName: 'Hafızam AI',
+  webDir: 'dist',
+  plugins: {
+    LocalNotifications: {
+      smallIcon: 'ic_stat_icon_config_sample',
+      iconColor: '#4F46E5',
+      sound: 'beep.wav',
+    },
+  },
+};
+
+export default config;
